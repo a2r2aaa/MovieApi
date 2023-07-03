@@ -1,6 +1,7 @@
 package com.example.exerciseunigis.ui.main
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
@@ -17,10 +18,17 @@ class MovieAdapter(context: Context, movies: List<Movie>) : ArrayAdapter<Movie>(
         val viewHolder: ViewHolder
 
         val view = if (convertView == null) {
-            val newView = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_2, parent, false)
+            val newView = convertView ?: LayoutInflater.from(context).inflate(R.layout.fragment_list_item, parent, false)
             viewHolder = ViewHolder()
-            viewHolder.titleTextView = newView.findViewById(android.R.id.text1)
-            viewHolder.overviewTextView = newView.findViewById(android.R.id.text2)
+
+
+
+
+
+            viewHolder.titleTextView = newView.findViewById(R.id.textOne)
+            viewHolder.overviewTextView = newView.findViewById(R.id.text3)
+            viewHolder.mainTitle = newView.findViewById(R.id.textTwo)
+            viewHolder.DateRelease = newView.findViewById(R.id.text4)
             newView.tag = viewHolder
             newView
         } else {
@@ -30,13 +38,24 @@ class MovieAdapter(context: Context, movies: List<Movie>) : ArrayAdapter<Movie>(
 
         val movie = getItem(position)!!
         viewHolder.titleTextView.text = movie.title
+
+      //
+        viewHolder.mainTitle.text = movie.original_language
         viewHolder.overviewTextView.text = movie.overview
+        viewHolder.DateRelease.text = movie.release_date
+
+        viewHolder.titleTextView.setTextColor(Color.WHITE)
+       // viewHolder.overviewTextView.setTextColor(Color.WHITE)
+        viewHolder.mainTitle.setTextColor(Color.WHITE)
+        viewHolder.DateRelease.setTextColor(Color.WHITE)
 
         return view
     }
 
     class ViewHolder {
         lateinit var titleTextView: TextView
+        lateinit var mainTitle: TextView
+        lateinit var DateRelease: TextView
         lateinit var overviewTextView: TextView
     }
 }

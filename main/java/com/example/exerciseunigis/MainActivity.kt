@@ -5,6 +5,7 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ListView
 import com.example.exerciseunigis.ui.main.*
 
@@ -20,7 +21,7 @@ import java.net.URL
 
 class MainActivity : AppCompatActivity() {
     private lateinit var listView: ListView
-    private lateinit var listView2: ListView
+    private lateinit var listView2: LinearLayout
     private lateinit var adapter: MovieAdapter
     private lateinit var adapter2: ItemImageAdapter
 
@@ -32,7 +33,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
 
-
+        fun loadImageIntoImageView(imageView: ImageView, imageUrl: String) {
+            AsyncTask.execute {
+                val url = URL(imageUrl)
+                val inputStream = url.openStream()
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                runOnUiThread {
+                    imageView.setImageBitmap(bitmap)
+                }
+            }
+        }
 
 
          fun getMovies() {
@@ -53,12 +63,60 @@ class MainActivity : AppCompatActivity() {
                         val title = movieJson.getString("title")
                         val overview = movieJson.getString("overview")
                         val pick = movieJson.getString("poster_path")
-                        val movie = Movie(888, title, overview, pick)
+                        val language = movieJson.getString("original_language")
+                        val dateRealese = movieJson.getString("release_date")
+                        val movie = Movie(888, title, overview, pick, language,dateRealese)
 //                        println("ssssss"+pick)
                         runOnUiThread { adapter.add(movie) }
                     }
                 }
             }
+
+
+                 AsyncTask.execute {
+
+
+                     client.newCall(request).execute().use { response ->
+                         val json = JSONObject(response.body()!!.string())
+                         val results = json.getJSONArray("results")
+
+                             val movieJson = results.getJSONObject(2)
+                             val title = movieJson.getString("title")
+                             val overview = movieJson.getString("overview")
+                             val pick = movieJson.getString("poster_path")
+                         val language = movieJson.getString("original_language")
+                         val dateRealese = movieJson.getString("release_date")
+
+                         val movie = Movie(2, title, overview, pick,language,dateRealese)
+
+                             val images = movie.poster_path
+
+                             val listView2 = findViewById<LinearLayout>(R.id.listViewContent)
+
+                             for (image in images) {
+
+                                 val imageView = ImageView(this)
+
+
+
+                                 // Cargar la imagen en el ImageView (puedes usar una biblioteca como Glide o Picasso para hacerlo)
+                                 loadImageIntoImageView(
+                                     imageView,
+                                     "https://image.tmdb.org/t/p/w500/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg"
+                                 )
+                                 runOnUiThread {
+                                     listView2.addView(imageView)
+                                 }
+
+                             }
+
+                     }
+
+             }
+
+
+
+
         }
 
 
@@ -67,11 +125,18 @@ class MainActivity : AppCompatActivity() {
 
 
        listView = findViewById(R.id.listView)
-        listView2 = findViewById(R.id.listView2)
+//        listView2 = findViewById(R.id.listView2)
+        val linearLayout = findViewById<LinearLayout>(R.id.listViewContent)
+        listView.dividerHeight = 9
         adapter = MovieAdapter(this, ArrayList())
-        adapter2 = ItemImageAdapter(this, ArrayList())
+//        adapter2 = ItemImageAdapter(this, ArrayList())
         listView.adapter = adapter
-        listView2.adapter = adapter
+//        listView2.adapter = adapter2
+
+
+
+
+
 
       getMovies()
 
