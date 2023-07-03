@@ -1,27 +1,39 @@
 package com.example.exerciseunigis
 
+import android.graphics.BitmapFactory
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.ImageView
 import android.widget.ListView
+import com.example.exerciseunigis.ui.main.*
 
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
-import com.example.exerciseunigis.ui.main.ApiClient
-import com.example.exerciseunigis.ui.main.Movie
-import com.example.exerciseunigis.ui.main.MovieAdapter
 
-import com.example.exerciseunigis.ui.main.MoviesResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.URL
 
 class MainActivity : AppCompatActivity() {
     private lateinit var listView: ListView
+    private lateinit var listView2: ListView
     private lateinit var adapter: MovieAdapter
+    private lateinit var adapter2: ItemImageAdapter
+
+
+
+
+
+    private lateinit var imageViewExample: ImageView
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
+
+
 
          fun getMovies() {
             val client = OkHttpClient()
@@ -30,6 +42,9 @@ class MainActivity : AppCompatActivity() {
                 .build()
 
             AsyncTask.execute {
+
+
+
                 client.newCall(request).execute().use { response ->
                     val json = JSONObject(response.body()!!.string())
                     val results = json.getJSONArray("results")
@@ -37,7 +52,9 @@ class MainActivity : AppCompatActivity() {
                         val movieJson = results.getJSONObject(i)
                         val title = movieJson.getString("title")
                         val overview = movieJson.getString("overview")
-                        val movie = Movie(888, title, overview, "/fiVW06jE7z9YnO4trhaMEdclSiC.jpg")
+                        val pick = movieJson.getString("poster_path")
+                        val movie = Movie(888, title, overview, pick)
+//                        println("ssssss"+pick)
                         runOnUiThread { adapter.add(movie) }
                     }
                 }
@@ -49,9 +66,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-        listView = findViewById(R.id.listView)
+       listView = findViewById(R.id.listView)
+        listView2 = findViewById(R.id.listView2)
         adapter = MovieAdapter(this, ArrayList())
+        adapter2 = ItemImageAdapter(this, ArrayList())
         listView.adapter = adapter
+        listView2.adapter = adapter
 
       getMovies()
 
