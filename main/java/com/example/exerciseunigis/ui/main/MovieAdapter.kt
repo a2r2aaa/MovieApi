@@ -3,6 +3,8 @@ package com.example.exerciseunigis.ui.main
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +31,7 @@ class MovieAdapter(context: Context, movies: List<Movie>) : ArrayAdapter<Movie>(
             viewHolder.overviewTextView = newView.findViewById(R.id.text3)
             viewHolder.mainTitle = newView.findViewById(R.id.textTwo)
             viewHolder.DateRelease = newView.findViewById(R.id.text4)
+            viewHolder.imageViewItems = newView.findViewById(R.id.myImageViewContent)
             newView.tag = viewHolder
             newView
         } else {
@@ -49,12 +52,18 @@ class MovieAdapter(context: Context, movies: List<Movie>) : ArrayAdapter<Movie>(
         viewHolder.mainTitle.setTextColor(Color.WHITE)
         viewHolder.DateRelease.setTextColor(Color.WHITE)
 
+
+        val imageViewItems = view.findViewById<ImageView>(R.id.myImageViewContent)
+
+        DownloadImageTask(imageViewItems).execute("https://image.tmdb.org/t/p/w500/${movie.poster_path}")
+
         return view
     }
 
     class ViewHolder {
         lateinit var titleTextView: TextView
         lateinit var mainTitle: TextView
+        lateinit var imageViewItems: ImageView
         lateinit var DateRelease: TextView
         lateinit var overviewTextView: TextView
     }

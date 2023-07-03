@@ -1,9 +1,11 @@
 package com.example.exerciseunigis
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ListView
@@ -175,6 +177,8 @@ class MainActivity : AppCompatActivity() {
             override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
                 // Handle error
             }
+
+
         })
     }
 }
