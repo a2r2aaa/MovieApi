@@ -1,19 +1,21 @@
 package com.example.exerciseunigis
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ListView
+import android.widget.*
 import com.example.exerciseunigis.ui.main.*
+
+
 
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
+
 import org.json.JSONObject
 
 import retrofit2.Call
@@ -21,14 +23,26 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.net.URL
 
+
 class MainActivity : AppCompatActivity() {
     private lateinit var listView: ListView
+    private lateinit var listView22: ListView
     private lateinit var listView2: LinearLayout
     private lateinit var adapter: MovieAdapter
     private lateinit var adapter2: ItemImageAdapter
 
     private lateinit var imageViewExample: ImageView
     override fun onCreate(savedInstanceState: Bundle?) {
+
+//
+//        listView22 = findViewById(R.id.listView) // Reemplaza esto con el ID de tu ListView
+//
+//
+//        val movieAdapter = MovieAdapter(this, ArrayList())
+//        listView22.adapter = movieAdapter
+//
+
+
 
         fun loadImageIntoImageView(imageView: ImageView, imageUrl: String) {
             AsyncTask.execute {
@@ -59,6 +73,12 @@ class MainActivity : AppCompatActivity() {
                         val language = movieJson.getString("original_language")
                         val dateRealese = movieJson.getString("release_date")
                         val movie = Movie(888, title, overview, pick, language,dateRealese)
+
+
+
+
+
+
 //                        println("ssssss"+pick)
                         runOnUiThread { adapter.add(movie) }
                     }
@@ -97,9 +117,21 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
+
+
+
        listView = findViewById(R.id.listView)
         listView.dividerHeight = 9
         adapter = MovieAdapter(this, ArrayList())
+
+        listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+            val selectedMovie = adapter.getItem(position) as Movie
+            // Realiza una acción con la película seleccionada
+            // Por ejemplo, mostrar su descripción en un Toast
+            Toast.makeText(this,selectedMovie.overview, Toast.LENGTH_LONG).show()
+        }
+
+
         listView.adapter = adapter
 
       getMovies()
@@ -115,6 +147,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 // Use the movies list
             }
+
+
 
 
             override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {

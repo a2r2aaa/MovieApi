@@ -60,11 +60,17 @@ class MovieAdapter(context: Context, movies: List<Movie>) : ArrayAdapter<Movie>(
         return view
     }
 
+
+
     class ViewHolder {
         lateinit var titleTextView: TextView
         lateinit var mainTitle: TextView
         lateinit var imageViewItems: ImageView
         lateinit var DateRelease: TextView
         lateinit var overviewTextView: TextView
+    }
+
+    companion object {
+
     }
 }
