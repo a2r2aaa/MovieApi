@@ -37,6 +37,53 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        fun getMoviesPortada(index: Int) {
+
+            val client = OkHttpClient()
+            val request = Request.Builder()
+                .url("https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=${index}&api_key=55957fcf3ba81b137f8fc01ac5a31fb5")
+                .build()
+            AsyncTask.execute {
+                client.newCall(request).execute().use { response ->
+                    val json = JSONObject(response.body()!!.string())
+                    val results = json.getJSONArray("results")
+                    val movies = mutableListOf<Movie>()
+                    for (i in 0 until results.length()) {
+                        val movieJson = results.getJSONObject(i)
+                        val title = movieJson.getString("title")
+                        val overview = movieJson.getString("overview")
+                        val pick = movieJson.getString("poster_path")
+                        val language = movieJson.getString("original_language")
+                        val dateRealese = movieJson.getString("release_date")
+                        val movie = Movie(i, title, overview, pick, language, dateRealese)
+                        movies.add(movie)
+                    }
+                    val listView2 = findViewById<LinearLayout>(R.id.listViewContent)
+
+                    for (movie in movies) {
+                        val imageView = ImageView(this)
+                        val dialogImageView = ImageView(this)
+                        val currentMovie = movie
+                        loadImageIntoImageView(imageView, "https://image.tmdb.org/t/p/w500/${currentMovie.poster_path}")
+                        loadImageIntoImageView(dialogImageView, "https://image.tmdb.org/t/p/w500/${currentMovie.poster_path}")
+                        runOnUiThread {
+                            listView2.addView(imageView)
+                            imageView.setOnClickListener { view ->
+                                // Aquí puedes manejar el click en el elemento
+                                AlertDialog.Builder(this)
+                                    .setTitle(currentMovie.title)
+                                    .setCustomTitle(dialogImageView)
+                                    .setMessage("Language: ${ currentMovie.original_language }," +
+                                            " Date: ${ currentMovie.release_date } ,Overview: ${ currentMovie.overview }")
+                                    .setPositiveButton("Entendido", null)
+                                    .show()
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
          fun getMovies(index: Int) {
             val client = OkHttpClient()
@@ -62,46 +109,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-                 AsyncTask.execute {
-                     client.newCall(request).execute().use { response ->
-                         val json = JSONObject(response.body()!!.string())
-                         val results = json.getJSONArray("results")
-                         val movies = mutableListOf<Movie>()
-                         for (i in 0 until results.length()) {
-                             val movieJson = results.getJSONObject(i)
-                             val title = movieJson.getString("title")
-                             val overview = movieJson.getString("overview")
-                             val pick = movieJson.getString("poster_path")
-                             val language = movieJson.getString("original_language")
-                             val dateRealese = movieJson.getString("release_date")
-                             val movie = Movie(i, title, overview, pick, language, dateRealese)
-                             movies.add(movie)
-                         }
-                         val listView2 = findViewById<LinearLayout>(R.id.listViewContent)
 
-                         for (movie in movies) {
-                             val imageView = ImageView(this)
-                             val dialogImageView = ImageView(this)
-                             val currentMovie = movie
-                             loadImageIntoImageView(imageView, "https://image.tmdb.org/t/p/w500/${currentMovie.poster_path}")
-                             loadImageIntoImageView(dialogImageView, "https://image.tmdb.org/t/p/w500/${currentMovie.poster_path}")
-                             runOnUiThread {
-                                 listView2.addView(imageView)
-                                 imageView.setOnClickListener { view ->
-                                     // Aquí puedes manejar el click en el elemento
-                                     AlertDialog.Builder(this)
-                                         .setTitle(currentMovie.title)
-                                         .setCustomTitle(dialogImageView)
-                                         .setMessage("Language: ${ currentMovie.original_language }," +
-                                                 " Date: ${ currentMovie.release_date } ,Overview: ${ currentMovie.overview }")
-                                         .setPositiveButton("Entendido", null)
-                                         .show()
-
-                                 }
-                             }
-                         }
-                     }
-             }
         }
 
 
@@ -128,7 +136,8 @@ class MainActivity : AppCompatActivity() {
 
         listView.adapter = adapter
 
-      getMovies(1)
+      getMovies(2)
+        getMoviesPortada(1)
         val apiKey = "55957fcf3ba81b137f8fc01ac5a31fb5"
         val call = ApiClient.tmdbService.getNowPlaying(apiKey, "en-US", 1)
         call.enqueue(object : Callback<MoviesResponse> {
