@@ -38,10 +38,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-         fun getMovies() {
+         fun getMovies(index: Int) {
             val client = OkHttpClient()
             val request = Request.Builder()
-                .url("https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=undefined&api_key=55957fcf3ba81b137f8fc01ac5a31fb5")
+                .url("https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=${index}&api_key=55957fcf3ba81b137f8fc01ac5a31fb5")
                 .build()
 
             AsyncTask.execute {
@@ -78,11 +78,26 @@ class MainActivity : AppCompatActivity() {
                              movies.add(movie)
                          }
                          val listView2 = findViewById<LinearLayout>(R.id.listViewContent)
+
                          for (movie in movies) {
                              val imageView = ImageView(this)
-                             loadImageIntoImageView(imageView, "https://image.tmdb.org/t/p/w500/${movie.poster_path}")
+                             val dialogImageView = ImageView(this)
+                             val currentMovie = movie
+                             loadImageIntoImageView(imageView, "https://image.tmdb.org/t/p/w500/${currentMovie.poster_path}")
+                             loadImageIntoImageView(dialogImageView, "https://image.tmdb.org/t/p/w500/${currentMovie.poster_path}")
                              runOnUiThread {
                                  listView2.addView(imageView)
+                                 imageView.setOnClickListener { view ->
+                                     // Aquí puedes manejar el click en el elemento
+                                     AlertDialog.Builder(this)
+                                         .setTitle(currentMovie.title)
+                                         .setCustomTitle(dialogImageView)
+                                         .setMessage("Language: ${ currentMovie.original_language }," +
+                                                 " Date: ${ currentMovie.release_date } ,Overview: ${ currentMovie.overview }")
+                                         .setPositiveButton("Entendido", null)
+                                         .show()
+
+                                 }
                              }
                          }
                      }
@@ -93,7 +108,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
        listView = findViewById(R.id.listView)
-        listView.dividerHeight = 9
+        listView.dividerHeight = 10
         adapter = MovieAdapter(this, ArrayList())
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
@@ -113,8 +128,7 @@ class MainActivity : AppCompatActivity() {
 
         listView.adapter = adapter
 
-      getMovies()
-
+      getMovies(1)
         val apiKey = "55957fcf3ba81b137f8fc01ac5a31fb5"
         val call = ApiClient.tmdbService.getNowPlaying(apiKey, "en-US", 1)
         call.enqueue(object : Callback<MoviesResponse> {
